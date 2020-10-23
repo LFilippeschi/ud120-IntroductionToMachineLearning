@@ -5,7 +5,7 @@ import pickle
 import re
 import sys
 
-sys.path.append( "../tools/" )
+sys.path.append( "/home/leonardo/Udacity Machine learning/tools/" )
 from parse_out_email_text import parseOutText
 
 """
@@ -23,8 +23,8 @@ from parse_out_email_text import parseOutText
 """
 
 
-from_sara  = open("from_sara.txt", "r")
-from_chris = open("from_chris.txt", "r")
+from_sara  = open("/home/leonardo/Udacity Machine learning/text_learning/from_sara.txt", "r")
+from_chris = open("/home/leonardo/Udacity Machine learning/text_learning/from_chris.txt", "r")
 
 from_data = []
 word_data = []
@@ -44,27 +44,42 @@ for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
         temp_counter += 1
         if temp_counter < 200:
             path = os.path.join('..', path[:-1])
-            print path
+            print (path)
             email = open(path, "r")
 
             ### use parseOutText to extract the text from the opened email
+            parsed = parseOutText(email)
 
             ### use str.replace() to remove any instances of the words
             ### ["sara", "shackleton", "chris", "germani"]
+            parsed = parsed.replace("sara", "")
+            parsed = parsed.replace("shackleton", "")
+            parsed = parsed.replace("schris", "")
+            parsed = parsed.replace("germani", "")
 
             ### append the text to word_data
+            word_data.append(str(parsed))
 
             ### append a 0 to from_data if email is from Sara, and 1 if email is from Chris
-
+            if name == "sara":
+                from_data.append('0')
+            else:
+                from_data.append('1')
 
             email.close()
 
-print "emails processed"
+print ("emails processed")
+#print (word_data)
+#print (from_data)
 from_sara.close()
 from_chris.close()
 
-pickle.dump( word_data, open("your_word_data.pkl", "w") )
-pickle.dump( from_data, open("your_email_authors.pkl", "w") )
+print(word_data[152])
+
+your_word_data = open("/home/leonardo/Udacity Machine learning/text_learning/your_word_data.pkl", "wb") 
+your_email_authors = open("/home/leonardo/Udacity Machine learning/text_learning/your_email_authors.pkl", "wb") 
+pickle.dump( word_data, your_word_data)
+pickle.dump( from_data, your_email_authors)
 
 
 

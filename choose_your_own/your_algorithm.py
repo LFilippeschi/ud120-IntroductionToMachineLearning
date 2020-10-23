@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
+from time import time
 import matplotlib.pyplot as plt
 from prep_terrain_data import makeTerrainData
 from class_vis import prettyPicture
+from sklearn import neighbors, ensemble
 
 features_train, labels_train, features_test, labels_test = makeTerrainData()
 
@@ -27,18 +29,60 @@ plt.ylabel("grade")
 plt.show()
 ################################################################################
 
+### KN Neighbors
+clf = neighbors.KNeighborsClassifier(n_neighbors=15, weights='distance')
 
-### your code here!  name your classifier object clf if you want the 
-### visualization code (prettyPicture) to show you the decision boundary
+### train the classifier using the features and labels 
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
 
+### predict the rest of the data 
+t0 = time()
+clf.predict(features_test)
+print "predicting time:", round(time()-t0, 3), "s"
 
+### check for accuracy 
+print "accuracy", clf.score(features_test, labels_test)
 
+################################################################################
 
+### ADABOOST
+""" clf = ensemble.AdaBoostClassifier(n_estimators=100, learning_rate=.1)
 
+### train the classifier using the features and labels 
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
 
+### predict the rest of the data 
+t0 = time()
+clf.predict(features_test)
+print "predicting time:", round(time()-t0, 3), "s"
+
+### check for accuracy 
+print "accuracy", clf.score(features_test, labels_test) """
+
+################################################################################
+
+### RANDOM FOREST
+""" clf = ensemble.RandomForestClassifier(n_estimators=100, min_samples_leaf=50, criterion='entropy')
+ 
+### train the classifier using the features and labels 
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+### predict the rest of the data 
+t0 = time()
+clf.predict(features_test)
+print "predicting time:", round(time()-t0, 3), "s"
+
+### check for accuracy 
+print "accuracy", clf.score(features_test, labels_test)  """
 
 
 try:
-    prettyPicture(clf, features_test, labels_test)
+    prettyPicture(clf, features_test, labels_test, "test")
 except NameError:
     pass

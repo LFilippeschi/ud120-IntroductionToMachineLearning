@@ -11,7 +11,10 @@ import pickle
 import numpy
 import matplotlib.pyplot as plt
 import sys
-sys.path.append("../tools/")
+import math
+sys.path.append("/home/leonardo/Udacity Machine learning/tools/")
+from sklearn.cluster import KMeans 
+from sklearn.preprocessing import MinMaxScaler
 from feature_format import featureFormat, targetFeatureSplit
 
 
@@ -39,20 +42,51 @@ def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature
 
 
 ### load in the dict of dicts containing all the data on each person in the dataset
-data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r") )
+data_dict = pickle.load( open("/home/leonardo/Udacity Machine learning/final_project/final_project_dataset.pkl", "r") )
 ### there's an outlier--remove it! 
 data_dict.pop("TOTAL", 0)
+
+### analyze max and min value in the data_dict['X']["exercised_stock_options]
+max_stock = 0 
+min_stock = 999999999
+
+max_salary = 0
+min_salary = 999999999
+for x in data_dict:
+    tmp_stock = data_dict[x]["exercised_stock_options"]
+    tmp_salary = data_dict[x]["salary"]
+    if tmp_stock == 0 or str(tmp_stock) == "NaN":
+        continue
+    if tmp_stock < min_stock:
+        min_stock = tmp_stock
+    if tmp_stock > max_stock:
+        max_stock = tmp_stock
+    if tmp_salary == 0 or str(tmp_salary) == "NaN":
+        continue
+    if tmp_salary < min_salary:
+        min_salary = tmp_salary
+    if tmp_salary > max_salary:
+        max_salary = tmp_salary
+print max_stock 
+print min_stock 
+print max_salary 
+print min_salary 
 
 
 ### the input features we want to use 
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
 data = featureFormat(data_dict, features_list )
 poi, finance_features = targetFeatureSplit( data )
 
+### reascale the data in the the range [0, 1]
+scaler = MinMaxScaler()
+finance_features = scaler.fit_transform(finance_features)
+print scaler.transform([[200000. , 0.], [0. ,1000000.]])
 
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
@@ -64,13 +98,13 @@ plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
-
-
+clf = KMeans(n_clusters=2, random_state=0)
+pred = clf.fit_predict(finance_features)
 
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
 try:
-    Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
+    Draw(pred, finance_features, poi, mark_poi=False, name="clusters_3features.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"

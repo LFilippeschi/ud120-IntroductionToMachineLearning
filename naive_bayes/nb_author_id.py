@@ -12,7 +12,7 @@
     
 import sys
 from time import time
-sys.path.append("../tools/")
+sys.path.append("/home/leonardo/Udacity Machine learning/tools/")
 from email_preprocess import preprocess
 
 
@@ -22,10 +22,23 @@ from email_preprocess import preprocess
 features_train, features_test, labels_train, labels_test = preprocess()
 
 
+### create classifier using naive bayes method 
+from sklearn.naive_bayes import GaussianNB
+clf = GaussianNB()
+
+### train the classifier using the features and labels 
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
 
 
-#########################################################
-### your code goes here ###
+### predict the rest of the data 
+t0 = time()
+clf.predict(features_test)
+print "predicting time:", round(time()-t0, 3), "s"
+
+### check for accuracy 
+print "accuracy", clf.score(features_test, labels_test)
 
 
 #########################################################

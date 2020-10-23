@@ -1,13 +1,18 @@
-#!/usr/bin/python
+import warnings
+warnings.filterwarnings("ignore")
 
-import numpy as np
+import matplotlib 
+matplotlib.use('agg')
+
 import matplotlib.pyplot as plt
 import pylab as pl
+import numpy as np
 
-def prettyPicture(clf, X_test, y_test, name):
+
+def prettyPicture(clf, X_test, y_test):
     x_min = 0.0; x_max = 1.0
     y_min = 0.0; y_max = 1.0
-    
+
     # Plot the decision boundary. For that, we will assign a color to each
     # point in the mesh [x_min, m_max]x[y_min, y_max].
     h = .01  # step size in the mesh
@@ -33,8 +38,8 @@ def prettyPicture(clf, X_test, y_test, name):
     plt.xlabel("bumpiness")
     plt.ylabel("grade")
 
-    plt.savefig("choose_your_own/" + name + ".png")
-
+    plt.savefig("test.png")
+    
 import base64
 import json
 import subprocess
@@ -46,5 +51,4 @@ def output_image(name, format, bytes):
     data['name'] = name
     data['format'] = format
     data['bytes'] = base64.encodestring(bytes)
-    print image_start+json.dumps(data)+image_end
-                                    
+    print (image_start+json.dumps(data)+image_end)
